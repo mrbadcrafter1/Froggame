@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Конфигурация игры
     const config = {
         lilyWidth: 60,
         lilyHeight: 60,
@@ -12,8 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
         gameHeight: 535,
         speedIncrement: 0.05
     };
-    
-    // Элементы интерфейса
     const gameContainer = document.getElementById('game');
     const registerForm = document.getElementById('register-form');
     const nicknameInput = document.getElementById('nickname');
@@ -23,8 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const scoreDisplay = document.getElementById('score');
     const gameOverDisplay = document.getElementById('game-over');
     const finalScoreDisplay = document.getElementById('final-score');
-    
-    // Игровые переменные
     let playerNickname = localStorage.getItem('frogGameNickname') || '';
     let score = 0;
     let isGameRunning = false;
@@ -33,16 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentSpeed = config.baseSpeed;
     let gameLoopId = null;
     let playersData = JSON.parse(localStorage.getItem('frogGamePlayers')) || [];
-    
-    // Инициализация игры
     function init() {
         updateLeaderboard();
         gameContainer.style.width = `${config.gameWidth}px`;
-        
         if (playerNickname) {
             currentPlayerSpan.textContent = playerNickname;
             registerForm.style.display = 'none';
-            
             if (!playersData.some(p => p.nickname === playerNickname)) {
                 playersData.push({
                     nickname: playerNickname,
@@ -54,16 +45,11 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             registerForm.style.display = 'block';
         }
-        
         registerBtn.addEventListener('click', registerPlayer);
         document.addEventListener('keydown', handleKeyPress);
-        
-        // Добавляем обработчики для мобильных устройств и мыши
         gameContainer.addEventListener('touchstart', handleJump);
         gameContainer.addEventListener('mousedown', handleJump);
     }
-    
-    // Универсальный обработчик прыжка
     function handleJump(e) {
         e.preventDefault();
         if (!isGameRunning) {
@@ -72,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
             jump();
         }
     }
-    
     function registerPlayer() {
         const nickname = nicknameInput.value.trim();
         if (nickname) {
@@ -80,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('frogGameNickname', nickname);
             currentPlayerSpan.textContent = nickname;
             registerForm.style.display = 'none';
-            
             if (!playersData.some(p => p.nickname === nickname)) {
                 playersData.push({
                     nickname: nickname,
@@ -93,26 +77,21 @@ document.addEventListener('DOMContentLoaded', function() {
             startGame();
         }
     }
-    
     function handleKeyPress(e) {
         if (e.code === 'Space') {
             e.preventDefault();
             handleJump(e);
         }
     }
-    
     function savePlayersData() {
         localStorage.setItem('frogGamePlayers', JSON.stringify(playersData));
     }
-    
     function updateLeaderboard() {
         const sortedPlayers = [...playersData].sort((a, b) => b.highscore - a.highscore);
         const topPlayers = sortedPlayers.slice(0, 10);
-        
         while (leaderboardTable.rows.length > 1) {
             leaderboardTable.deleteRow(1);
         }
-        
         topPlayers.forEach((player, index) => {
             const row = leaderboardTable.insertRow();
             row.insertCell(0).textContent = index + 1;
@@ -120,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function() {
             row.insertCell(2).textContent = player.highscore;
         });
     }
-    
     function createFrog() {
         frog = document.createElement('div');
         frog.className = 'frog';
@@ -128,19 +106,15 @@ document.addEventListener('DOMContentLoaded', function() {
         frog.style.bottom = '50px';
         gameContainer.appendChild(frog);
     }
-    
     function spawnLilypad() {
         if (activeLilypad) return;
-
         const lilypad = document.createElement('div');
         lilypad.className = 'lilypad';
         const startFromLeft = Math.random() > 0.5;
         const startX = startFromLeft ? -config.lilyWidth : config.gameWidth;
-        
         lilypad.style.left = `${startX}px`;
         lilypad.style.top = `${config.spawnY}px`;
         gameContainer.appendChild(lilypad);
-
         activeLilypad = {
             element: lilypad,
             x: startX,
@@ -149,25 +123,19 @@ document.addEventListener('DOMContentLoaded', function() {
             speed: currentSpeed
         };
     }
-    
     function jump() {
         if (!frog || !isGameRunning) return;
-        
         frog.style.transform = `translateY(-${config.jumpHeight}px) scale(1.1)`;
         frog.style.transition = 'transform 0.3s ease';
-        
         setTimeout(() => {
             frog.style.transform = 'translateY(0) scale(1)';
             checkLanding();
         }, 300);
     }
-    
     function checkLanding() {
         if (!activeLilypad) return;
-        
         const frogRect = frog.getBoundingClientRect();
         const lilyRect = activeLilypad.element.getBoundingClientRect();
-        
         if (frogRect.right > lilyRect.left + 10 && 
             frogRect.left < lilyRect.right - 10) {
             score++;
@@ -178,14 +146,11 @@ document.addEventListener('DOMContentLoaded', function() {
             endGame();
         }
     }
-    
     function gameLoop() {
         if (!isGameRunning) return;
-        
         if (activeLilypad) {
             activeLilypad.x += activeLilypad.direction * activeLilypad.speed;
             activeLilypad.element.style.left = `${activeLilypad.x}px`;
-            
             if (activeLilypad.x <= 0) {
                 activeLilypad.direction = 1;
                 activeLilypad.x = 0;
@@ -195,10 +160,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 activeLilypad.x = config.gameWidth - config.lilyWidth;
             }
         }
-        
         gameLoopId = requestAnimationFrame(gameLoop);
     }
-    
     function startGame() {
         resetGame();
         createFrog();
@@ -206,14 +169,11 @@ document.addEventListener('DOMContentLoaded', function() {
         isGameRunning = true;
         gameLoop();
     }
-    
     function endGame() {
         isGameRunning = false;
         cancelAnimationFrame(gameLoopId);
-        
         finalScoreDisplay.textContent = score;
         gameOverDisplay.style.display = 'block';
-        
         if (playerNickname) {
             const playerIndex = playersData.findIndex(p => p.nickname === playerNickname);
             if (playerIndex !== -1 && score > playersData[playerIndex].highscore) {
@@ -223,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-    
     function resetGame() {
         gameContainer.innerHTML = '';
         activeLilypad = null;
@@ -232,6 +191,5 @@ document.addEventListener('DOMContentLoaded', function() {
         gameOverDisplay.style.display = 'none';
         currentSpeed = config.baseSpeed;
     }
-    
     init();
 });
