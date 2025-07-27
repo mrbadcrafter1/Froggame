@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лягушка и кувшинки</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="register-form" id="register-form" style="display:none">
+            <h2>Введите ваш ник</h2>
+            <input type="text" id="nickname" placeholder="Ваш никнейм" required maxlength="20">
+            <button id="register-btn">Играть</button>
+        </div>
+
+        <div class="game-container" id="game-container">
+            <div class="game-area">
+                <div id="game"></div>
+                <div id="score">Очки: 0</div>
+                <div id="game-over">
+                    <p>Игра окончена!</p>
+                    <p>Ваш результат: <span id="final-score">0</span></p>
+                    <p>Нажмите Пробел для рестарта</p>
+                </div>
+            </div>
+            <div class="leaderboard">
+                <h2>Рекорды</h2>
+                <table id="leaderboard">
+                    <tr>
+                        <th>#</th>
+                        <th>Игрок</th>
+                        <th>Рекорд</th>
+                    </tr>
+                </table>
+                <p class="current-player">Вы: <span id="current-player">Гость</span></p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

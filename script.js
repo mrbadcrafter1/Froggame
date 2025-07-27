@@ -1,0 +1,237 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Конфигурация игры
+    const config = {
+        lilyWidth: 60,
+        lilyHeight: 60,
+        frogWidth: 40,
+        frogHeight: 40,
+        baseSpeed: 3,
+        spawnY: 330,
+        jumpHeight: 120,
+        gameWidth: 330,
+        gameHeight: 535,
+        speedIncrement: 0.05
+    };
+    
+    // Элементы интерфейса
+    const gameContainer = document.getElementById('game');
+    const registerForm = document.getElementById('register-form');
+    const nicknameInput = document.getElementById('nickname');
+    const registerBtn = document.getElementById('register-btn');
+    const currentPlayerSpan = document.getElementById('current-player');
+    const leaderboardTable = document.getElementById('leaderboard');
+    const scoreDisplay = document.getElementById('score');
+    const gameOverDisplay = document.getElementById('game-over');
+    const finalScoreDisplay = document.getElementById('final-score');
+    
+    // Игровые переменные
+    let playerNickname = localStorage.getItem('frogGameNickname') || '';
+    let score = 0;
+    let isGameRunning = false;
+    let frog = null;
+    let activeLilypad = null;
+    let currentSpeed = config.baseSpeed;
+    let gameLoopId = null;
+    let playersData = JSON.parse(localStorage.getItem('frogGamePlayers')) || [];
+    
+    // Инициализация игры
+    function init() {
+        updateLeaderboard();
+        gameContainer.style.width = `${config.gameWidth}px`;
+        
+        if (playerNickname) {
+            currentPlayerSpan.textContent = playerNickname;
+            registerForm.style.display = 'none';
+            
+            if (!playersData.some(p => p.nickname === playerNickname)) {
+                playersData.push({
+                    nickname: playerNickname,
+                    highscore: 0,
+                    created_at: new Date().toISOString()
+                });
+                savePlayersData();
+            }
+        } else {
+            registerForm.style.display = 'block';
+        }
+        
+        registerBtn.addEventListener('click', registerPlayer);
+        document.addEventListener('keydown', handleKeyPress);
+        
+        // Добавляем обработчики для мобильных устройств и мыши
+        gameContainer.addEventListener('touchstart', handleJump);
+        gameContainer.addEventListener('mousedown', handleJump);
+    }
+    
+    // Универсальный обработчик прыжка
+    function handleJump(e) {
+        e.preventDefault();
+        if (!isGameRunning) {
+            if (playerNickname) startGame();
+        } else {
+            jump();
+        }
+    }
+    
+    function registerPlayer() {
+        const nickname = nicknameInput.value.trim();
+        if (nickname) {
+            playerNickname = nickname;
+            localStorage.setItem('frogGameNickname', nickname);
+            currentPlayerSpan.textContent = nickname;
+            registerForm.style.display = 'none';
+            
+            if (!playersData.some(p => p.nickname === nickname)) {
+                playersData.push({
+                    nickname: nickname,
+                    highscore: 0,
+                    created_at: new Date().toISOString()
+                });
+                savePlayersData();
+                updateLeaderboard();
+            }
+            startGame();
+        }
+    }
+    
+    function handleKeyPress(e) {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            handleJump(e);
+        }
+    }
+    
+    function savePlayersData() {
+        localStorage.setItem('frogGamePlayers', JSON.stringify(playersData));
+    }
+    
+    function updateLeaderboard() {
+        const sortedPlayers = [...playersData].sort((a, b) => b.highscore - a.highscore);
+        const topPlayers = sortedPlayers.slice(0, 10);
+        
+        while (leaderboardTable.rows.length > 1) {
+            leaderboardTable.deleteRow(1);
+        }
+        
+        topPlayers.forEach((player, index) => {
+            const row = leaderboardTable.insertRow();
+            row.insertCell(0).textContent = index + 1;
+            row.insertCell(1).textContent = player.nickname;
+            row.insertCell(2).textContent = player.highscore;
+        });
+    }
+    
+    function createFrog() {
+        frog = document.createElement('div');
+        frog.className = 'frog';
+        frog.style.left = `${(config.gameWidth - config.frogWidth) / 2}px`;
+        frog.style.bottom = '50px';
+        gameContainer.appendChild(frog);
+    }
+    
+    function spawnLilypad() {
+        if (activeLilypad) return;
+
+        const lilypad = document.createElement('div');
+        lilypad.className = 'lilypad';
+        const startFromLeft = Math.random() > 0.5;
+        const startX = startFromLeft ? -config.lilyWidth : config.gameWidth;
+        
+        lilypad.style.left = `${startX}px`;
+        lilypad.style.top = `${config.spawnY}px`;
+        gameContainer.appendChild(lilypad);
+
+        activeLilypad = {
+            element: lilypad,
+            x: startX,
+            y: config.spawnY,
+            direction: startFromLeft ? 1 : -1,
+            speed: currentSpeed
+        };
+    }
+    
+    function jump() {
+        if (!frog || !isGameRunning) return;
+        
+        frog.style.transform = `translateY(-${config.jumpHeight}px) scale(1.1)`;
+        frog.style.transition = 'transform 0.3s ease';
+        
+        setTimeout(() => {
+            frog.style.transform = 'translateY(0) scale(1)';
+            checkLanding();
+        }, 300);
+    }
+    
+    function checkLanding() {
+        if (!activeLilypad) return;
+        
+        const frogRect = frog.getBoundingClientRect();
+        const lilyRect = activeLilypad.element.getBoundingClientRect();
+        
+        if (frogRect.right > lilyRect.left + 10 && 
+            frogRect.left < lilyRect.right - 10) {
+            score++;
+            scoreDisplay.textContent = `Очки: ${score}`;
+            currentSpeed += config.speedIncrement;
+            activeLilypad.speed = currentSpeed;
+        } else {
+            endGame();
+        }
+    }
+    
+    function gameLoop() {
+        if (!isGameRunning) return;
+        
+        if (activeLilypad) {
+            activeLilypad.x += activeLilypad.direction * activeLilypad.speed;
+            activeLilypad.element.style.left = `${activeLilypad.x}px`;
+            
+            if (activeLilypad.x <= 0) {
+                activeLilypad.direction = 1;
+                activeLilypad.x = 0;
+            } 
+            else if (activeLilypad.x >= config.gameWidth - config.lilyWidth) {
+                activeLilypad.direction = -1;
+                activeLilypad.x = config.gameWidth - config.lilyWidth;
+            }
+        }
+        
+        gameLoopId = requestAnimationFrame(gameLoop);
+    }
+    
+    function startGame() {
+        resetGame();
+        createFrog();
+        spawnLilypad();
+        isGameRunning = true;
+        gameLoop();
+    }
+    
+    function endGame() {
+        isGameRunning = false;
+        cancelAnimationFrame(gameLoopId);
+        
+        finalScoreDisplay.textContent = score;
+        gameOverDisplay.style.display = 'block';
+        
+        if (playerNickname) {
+            const playerIndex = playersData.findIndex(p => p.nickname === playerNickname);
+            if (playerIndex !== -1 && score > playersData[playerIndex].highscore) {
+                playersData[playerIndex].highscore = score;
+                savePlayersData();
+                updateLeaderboard();
+            }
+        }
+    }
+    
+    function resetGame() {
+        gameContainer.innerHTML = '';
+        activeLilypad = null;
+        score = 0;
+        scoreDisplay.textContent = 'Очки: 0';
+        gameOverDisplay.style.display = 'none';
+        currentSpeed = config.baseSpeed;
+    }
+    
+    init();
+});

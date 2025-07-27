@@ -1,0 +1,300 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e0f7fa;
+    color: #333;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.register-form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.register-form h2 {
+    color: #00796b;
+    margin-bottom: 20px;
+}
+
+.register-form input {
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #b2dfdb;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.register-form button {
+    background-color: #00796b;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.register-form button:hover {
+    background-color: #00695c;
+}
+
+.game-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.game-area {
+    position: relative;
+    width: 330px;
+    height: 535px;
+    background: linear-gradient(to bottom, #4fc3f7 0%, #26c6da 100%);
+    overflow: hidden;
+    border: 3px solid #00796b;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s ease;
+}
+
+#game {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#score {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 24px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    z-index: 100;
+}
+
+#game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    width: 80%;
+    display: none;
+    z-index: 200;
+}
+
+#game-over p {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+#final-score {
+    color: #ffeb3b;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.frog {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-image: url('frog.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 50;
+    transition: transform 0.3s ease, bottom 0.5s ease;
+}
+
+.lilypad {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-image: url('lilypad.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 40;
+    transition: top 0.5s ease, left 0.1s linear;
+}
+
+.leaderboard {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    height: 500px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.leaderboard table::before {
+    content: "ОТКАЗАНО";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 60px;
+    font-weight: bold;
+    color: rgba(255, 0, 0, 0.5);
+    z-index: 10;
+    pointer-events: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.leaderboard h2 {
+    color: #00796b;
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 20;
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    position: relative;
+    z-index: 20;
+}
+
+.leaderboard th {
+    background-color: #00796b;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.leaderboard td {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.leaderboard tr:nth-child(even) {
+    background-color: #e0f2f1;
+}
+
+.current-player {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #00795c;
+    text-align: center;
+    position: relative;
+    z-index: 20;
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .leaderboard {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .leaderboard table::before {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-form {
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 90%;
+    }
+
+    .register-form h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .register-form input {
+        width: 90%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .register-form button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .game-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .game-area {
+        width: 100%;
+        height: 500px;
+        max-width: 330px;
+    }
+
+    .leaderboard {
+        width: 100%;
+        max-width: 330px;
+        height: auto;
+        max-height: 300px;
+    }
+
+    .leaderboard table::before {
+        font-size: 30px;
+    }
+
+    #score {
+        font-size: 18px;
+    }
+
+    #game-over {
+        padding: 15px;
+        width: 90%;
+    }
+
+    #game-over p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 350px) {
+    .register-form {
+        padding: 15px;
+    }
+
+    .register-form h2 {
+        font-size: 18px;
+    }
+
+    .current-player {
+        font-size: 14px;
+    }
+    
+    .game-area {
+        height: 450px;
+    }
+    
+    .leaderboard table::before {
+        font-size: 25px;
+    }
+}
