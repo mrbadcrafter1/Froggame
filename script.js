@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
         gameWidth: 330,
         gameHeight: 535,
         speedIncrement: 0.05,
-        badLilyTransformChance: 0.3,
-        goldLilyTransformChance: 0.2,
-        goldLilySpeedMultiplier: 2,
+        badLilyTransformChance: 0.2,
+        goldLilyTransformChance: 0.15,
+        goldLilySpeedMultiplier: 1.5,
         goldLilyScore: 5
     };
 
