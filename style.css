@@ -62,7 +62,7 @@ body {
     position: relative;
     width: 330px;
     height: 535px;
-    background: linear-gradient(to bottom, #4fc3f7 0%, #26c6da 100%);
+    background-image: url(back.jpg);
     overflow: hidden;
     border: 3px solid #00796b;
     border-radius: 10px;
