@@ -62,7 +62,7 @@ body {
     position: relative;
     width: 330px;
     height: 535px;
-    background-image: url(back.jpg);
+    background-color: #0486dd;
     overflow: hidden;
     border: 3px solid #00796b;
     border-radius: 10px;
@@ -135,6 +135,27 @@ body {
     transition: top 0.5s ease, left 0.1s linear;
 }
 
+.blacklily {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-image: url('blacklily.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 40;
+    transition: top 0.5s ease, left 0.1s linear;
+}
+.goldlily {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-image: url('goldlily.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 40;
+    transition: top 0.5s ease, left 0.1s linear;
+    filter: drop-shadow(0 0 5px gold);
+}
 .leaderboard {
     background-color: #ffffff;
     padding: 20px;
@@ -145,7 +166,9 @@ body {
     overflow-y: auto;
     position: relative;
 }
-
+.leaderboard td:nth-child(2) {
+    transition: color 0.3s;
+}
 .leaderboard table::before {
     content: "ОТКАЗАНО";
     position: absolute;
