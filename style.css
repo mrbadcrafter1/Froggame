@@ -62,7 +62,7 @@ body {
     position: relative;
     width: 330px;
     height: 535px;
-    background-image: url('images/back.jpg');
+    background-image: url('back.jpg');
     background-size: cover;
     background-position: center;
     overflow: hidden;
