@@ -209,8 +209,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const frogRect = frog.getBoundingClientRect();
         const lilyRect = activeLilypad.element.getBoundingClientRect();
         
-        if (frogRect.right > lilyRect.left + 10 && 
-            frogRect.left < lilyRect.right - 10) {
+        if (frogRect.right > lilyRect.left + 5 && 
+            frogRect.left < lilyRect.right - 5) {
             if (activeLilypad.isBad) {
                 endGame();
             } else if (activeLilypad.isGold) {
